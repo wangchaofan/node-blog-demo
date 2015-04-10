@@ -28,20 +28,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '/')));
 
-app.locals({
-    config: config,
-    title: config.title
-});
-app.user(function (req, res, next) {
-    res.locals.title = config['title'],
-    res.locals.csrf = req.session ? req.session._csrf : '';
-    res.locals.req = req;
-    res.locals.session = req.session;
-    next();
-});
-app.use('/', routes);
-app.use('/users', users);
-
 //session
 app.use(session({
     secret: settings.cookieSecret,
@@ -49,6 +35,22 @@ app.use(session({
         db: settings.db
     })
 }));
+
+app.use(function (req, res, next) {
+    res.locals.csrf = req.session ? req.session._csrf : '';
+    res.locals.req = req;
+    res.locals.session = req.session;
+    var message = req.session.message;
+    delete req.session.message;
+    if(message) {
+        res.locals.message = message;
+    }
+    res.locals.user = req.session.user;
+    next();
+});
+
+app.use('/', routes);
+app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -70,7 +72,6 @@ if (app.get('env') === 'development') {
         });
     });
 }
-
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {

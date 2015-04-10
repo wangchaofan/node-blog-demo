@@ -6,6 +6,9 @@
     <link rel='stylesheet' href='../public/stylesheets/style.css' />
     <link rel="stylesheet" href="../public/stylesheets/bootstrap.min.css"/>
     <link rel="stylesheet" href="../public/stylesheets/bootstrap-theme.min.css"/>
+
+    <script src="../public/javascripts/jquery-1.11.2.js"></script>
+    <script src="../public/javascripts/bootstrap.min.js"></script>
 </head>
 <body screen_capture_injected="true">
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -21,11 +24,25 @@
             </div>
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="/">首页<span class="sr-only">(current)</span></a></li>
-                    <li><a href="/login">登录</a></li>
-                    <li><a href="/reg">注册</a></li>
+                    <li id="index"><a href="/">首页</a></li>
+                    <% if (!locals.user) { %>
+                        <li id="login"><a href="/login">登录</a></li>
+                        <li id="reg"><a href="/reg">注册</a></li>
+                    <% } else { %>
+                        <li><a href="/logout">退出登录</a></li>
+                    <% } %>
                 </ul>
             </div>
         </div>
     </nav>
+<script type="text/javascript">
+    var title = '<%= title %>';
+    if(title === '首页') {
+        $('#index').addClass('active');
+    } else if(title === '登录') {
+        $('#login').addClass('active');
+    } else {
+        $('#reg').addClass('active');
+    }
+</script>
 
